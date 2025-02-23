@@ -1,5 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Splash screen theme -->
+    <style name="Theme.App.Starting" parent="Theme.SplashScreen">
+        <!-- Splash screen background -->
+        <item name="windowSplashScreenBackground">@color/color_primary</item>
 
-    <style name="Theme.News" parent="android:Theme.Material.Light.NoActionBar" />
+        <!-- Splash screen icon -->
+        <item name="windowSplashScreenAnimatedIcon">@drawable/cat_reads</item>
+
+        <!-- Animation duration (in milliseconds) -->
+        <item name="windowSplashScreenAnimationDuration">200</item>
+
+        <!-- Post-splash screen theme -->
+        <item name="postSplashScreenTheme">@style/Theme.News</item>
+    </style>
+
+    <!-- Main app theme -->
+    <style name="Theme.News" parent="android:Theme.Material.Light.NoActionBar">
+        <!-- Customize your theme here if needed -->
+    </style>
 </resources>
