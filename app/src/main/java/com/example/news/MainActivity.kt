@@ -5,6 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -13,13 +14,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.lifecycleScope
-import com.example.news.presentation.NewsViewModel
+import com.example.news.presentation.newsList.NewsListScreen
+import com.example.news.presentation.newsList.NewsListViewModel
 import com.example.news.ui.theme.NewsTheme
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-    private val newsViewModel: NewsViewModel by viewModels()
+    private val newsViewModel: NewsListViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
         val splashScreen = installSplashScreen()
         var keepSplashScreen = true
@@ -32,21 +36,14 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             NewsTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
+                Scaffold(modifier = Modifier.fillMaxSize()) { PaddingValues ->
+                    NewsListScreen(
+                        newsViewModel,
+                        PaddingValues
                     )
+
                 }
             }
         }
-        // Call fetchNews when the activity starts
-        newsViewModel.fetchNews()
     }
-}
-
-
-@Composable
-fun Greeting(name:String,modifier: Modifier){
-    Text("Hello $name")
 }

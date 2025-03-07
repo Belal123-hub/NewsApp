@@ -3,8 +3,8 @@ package com.example.news.data.model
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class Article(
-    val source: Source,
+data class ApiArticle(
+    val source: ApiSource,
     val author: String?,
     val title: String,
     val description: String?,

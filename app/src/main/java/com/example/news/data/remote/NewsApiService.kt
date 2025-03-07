@@ -1,7 +1,7 @@
 package com.example.news.data.remote
 
 import android.util.Log
-import com.example.news.data.model.NewsResponse
+import com.example.news.data.model.ApiNewsResponse
 import com.example.news.BuildConfig
 import io.ktor.client.*
 import io.ktor.client.request.*
@@ -12,7 +12,7 @@ interface NewsApiService {
         country: String = "us",
         page: Int,
         pageSize: Int
-    ): NewsResponse
+    ): ApiNewsResponse
 }
 
 class NewsApiServiceImpl(private val client: HttpClient) : NewsApiService {
@@ -20,9 +20,9 @@ class NewsApiServiceImpl(private val client: HttpClient) : NewsApiService {
         country: String,
         page: Int,
         pageSize: Int
-    ): NewsResponse {
+    ): ApiNewsResponse {
         return try {
-            val response: NewsResponse = client.get {
+            val response: ApiNewsResponse = client.get {
                 url("${BuildConfig.BASE_URL}v2/top-headlines")
                 parameter("country", country)
                 parameter("page", page)
