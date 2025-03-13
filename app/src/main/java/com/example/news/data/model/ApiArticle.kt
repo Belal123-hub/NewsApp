@@ -1,15 +1,24 @@
 package com.example.news.data.model
 
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
 data class ApiArticle(
+    @SerialName("source")
     val source: ApiSource,
-    val author: String?,
+    @SerialName("author")
+    val author: String?=null,
+    @SerialName("title")
     val title: String,
-    val description: String?,
+    @SerialName("description")
+    val description: String?=null,
+    @SerialName("url")
     val url: String,
-    val urlToImage: String?,
+    @SerialName("urlToImage")
+    val urlToImage: String?=null,
+    @SerialName("publishedAt")
     val publishedAt: String,
-    val content: String?
+    @SerialName("content")
+    val content: String?=null
 )

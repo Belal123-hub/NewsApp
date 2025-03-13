@@ -6,6 +6,8 @@ import com.example.news.BuildConfig
 import io.ktor.client.*
 import io.ktor.client.request.*
 import io.ktor.client.call.body
+import kotlinx.coroutines.delay
+import javax.inject.Inject
 
 interface NewsApiService {
     suspend fun getTopHeadlines(
@@ -21,7 +23,7 @@ class NewsApiServiceImpl(private val client: HttpClient) : NewsApiService {
         page: Int,
         pageSize: Int
     ): ApiNewsResponse {
-        return try {
+        try {
             val response: ApiNewsResponse = client.get {
                 url("${BuildConfig.BASE_URL}v2/top-headlines")
                 parameter("country", country)
@@ -30,8 +32,18 @@ class NewsApiServiceImpl(private val client: HttpClient) : NewsApiService {
                 header("X-Api-Key", BuildConfig.API_KEY)
             }.body()
 
-            Log.d("NewsApiService", "API Response: $response") // Log response
-            response
+            if (response.status == "error") {
+                Log.e("NewsApiService", "API Error: ${response.message}, Code: ${response.code}")
+            } else {
+                Log.d("NewsApiService", "API Response: $response")
+            }
+
+            // Check if articles are empty
+            if (response.articles.isNullOrEmpty()) {
+                Log.w("NewsApiService", "No articles found for the given parameters.")
+            }
+
+            return response
         } catch (e: Exception) {
             Log.e("NewsApiService", "API Request failed: ${e.message}", e)
             throw e

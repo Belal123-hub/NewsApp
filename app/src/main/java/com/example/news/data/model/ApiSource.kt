@@ -4,6 +4,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class ApiSource(
-    val id: String?,
+    val id: String?=null,
     val name: String
 )
