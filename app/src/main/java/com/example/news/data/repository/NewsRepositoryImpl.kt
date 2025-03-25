@@ -15,29 +15,49 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
-class NewsRepositoryImpl @Inject constructor(
+ class NewsRepositoryImpl @Inject constructor(
     private val newsApiService: NewsApiService,
     private val newsDatabase: NewsDatabase
 ) : NewsRepository {
 
     @OptIn(ExperimentalPagingApi::class)
-    override fun getTopHeadlines(country: String): Flow<PagingData<Article>> {
-        return Pager(
-            config = PagingConfig(pageSize = 20),
-            remoteMediator = NewsRemoteMediator(newsApiService, newsDatabase, country),
-            pagingSourceFactory = { newsDatabase.articleDao().pagingSource() }
-        ).flow.map { pagingData ->
-            pagingData.map { articleEntity ->
-                // Map the Room entity to the domain model
-                Article(
-                    id = articleEntity.url,
-                    title = articleEntity.title,
-                    description = articleEntity.description,
-                    url = articleEntity.url,
-                    imageUrl = articleEntity.urlToImage,
-                    publishedAt = articleEntity.publishedAt,
-                    source = articleEntity.source
-                )
+    override fun getTopHeadlines(country: String, query: String?): Flow<PagingData<Article>> {
+        return if (query.isNullOrEmpty()) {
+            // Original paging with remote mediator
+            Pager(
+                config = PagingConfig(pageSize = 20),
+                remoteMediator = NewsRemoteMediator(newsApiService, newsDatabase, country),
+                pagingSourceFactory = { newsDatabase.articleDao().pagingSource() }
+            ).flow.map { pagingData ->
+                pagingData.map { articleEntity ->
+                    Article(
+                        id = articleEntity.url,
+                        title = articleEntity.title,
+                        description = articleEntity.description,
+                        url = articleEntity.url,
+                        imageUrl = articleEntity.urlToImage,
+                        publishedAt = articleEntity.publishedAt,
+                        source = articleEntity.source
+                    )
+                }
+            }
+        } else {
+            // Search from local database
+            Pager(
+                config = PagingConfig(pageSize = 20),
+                pagingSourceFactory = { newsDatabase.articleDao().searchPagingSource(query) }
+            ).flow.map { pagingData ->
+                pagingData.map { articleEntity ->
+                    Article(
+                        id = articleEntity.url,
+                        title = articleEntity.title,
+                        description = articleEntity.description,
+                        url = articleEntity.url,
+                        imageUrl = articleEntity.urlToImage,
+                        publishedAt = articleEntity.publishedAt,
+                        source = articleEntity.source
+                    )
+                }
             }
         }
     }

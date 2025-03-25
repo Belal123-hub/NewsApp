@@ -8,6 +8,14 @@ import androidx.room.Query
 
 @Dao
 interface ArticleDao {
+    // Add search query
+    @Query("""
+        SELECT * FROM articles 
+        WHERE title LIKE '%' || :query || '%' 
+        OR description LIKE '%' || :query || '%'
+        ORDER BY publishedAt DESC
+    """)
+    fun searchPagingSource(query: String): PagingSource<Int, Article>
     @Query("SELECT * FROM articles ORDER BY publishedAt DESC")
     fun pagingSource(): PagingSource<Int, Article>
 

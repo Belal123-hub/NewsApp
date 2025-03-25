@@ -6,10 +6,10 @@ import com.example.news.domain.repository.NewsRepository
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
-class GetTopHeadlinesUseCase @Inject constructor(
-    private val newsRepository: NewsRepository
+ class GetTopHeadlinesUseCase @Inject constructor(
+    private val repository: NewsRepository
 ) {
-    operator fun invoke(country: String): Flow<PagingData<Article>> {
-        return newsRepository.getTopHeadlines(country)
+    operator fun invoke(country: String, query: String? = null): Flow<PagingData<Article>> {
+        return repository.getTopHeadlines(country, query)
     }
 }

@@ -24,7 +24,8 @@ fun AppNavigation(
             NewsListScreen(
                 navController = navController,
                 news = news,
-                padding = padding
+                padding = padding,
+                viewModel = viewModel
             )
         }
         composable(

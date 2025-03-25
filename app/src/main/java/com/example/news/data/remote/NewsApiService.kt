@@ -6,12 +6,15 @@ import com.example.news.BuildConfig
 import io.ktor.client.*
 import io.ktor.client.request.*
 import io.ktor.client.call.body
-import kotlinx.coroutines.delay
-import javax.inject.Inject
 
 interface NewsApiService {
     suspend fun getTopHeadlines(
         country: String = "us",
+        page: Int,
+        pageSize: Int
+    ): ApiNewsResponse
+    suspend fun searchNews(
+        query: String,
         page: Int,
         pageSize: Int
     ): ApiNewsResponse
@@ -48,5 +51,19 @@ class NewsApiServiceImpl(private val client: HttpClient) : NewsApiService {
             Log.e("NewsApiService", "API Request failed: ${e.message}", e)
             throw e
         }
+    }
+
+    override suspend fun searchNews(
+        query: String,
+        page: Int,
+        pageSize: Int
+    ): ApiNewsResponse {
+        val response:ApiNewsResponse = client.get {
+            url("${BuildConfig.BASE_URL}v2/everything")
+            parameter("q", query)
+            parameter("page", page)
+            parameter("pageSize", pageSize)
+        }.body()
+        return response
     }
 }
