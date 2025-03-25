@@ -14,8 +14,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.lifecycleScope
-import com.example.news.presentation.newsList.NewsListScreen
-import com.example.news.presentation.newsList.NewsListViewModel
+import com.example.news.navigation.AppNavigation
+import com.example.news.presentation.screens.newsList.NewsListScreen
+import com.example.news.presentation.screens.newsList.NewsListViewModel
 import com.example.news.ui.theme.NewsTheme
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
@@ -37,7 +38,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             NewsTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { PaddingValues ->
-                    NewsListScreen(
+                    AppNavigation(
                         newsViewModel,
                         PaddingValues
                     )

@@ -78,6 +78,7 @@ dependencies {
     // Hilt
     implementation(libs.hilt.android)
     kapt(libs.hilt.android.compiler)
+    implementation (libs.androidx.hilt.navigation.compose)
     // Paging3
     implementation(libs.androidx.paging.runtime)
     implementation(libs.androidx.paging.compose)
@@ -88,5 +89,7 @@ dependencies {
     implementation(libs.androidx.room.ktx)
     ksp(libs.androidx.room.compiler)
     implementation(libs.androidx.room.paging)
+    //Navigation
+    implementation (libs.androidx.navigation.compose)
 }
 

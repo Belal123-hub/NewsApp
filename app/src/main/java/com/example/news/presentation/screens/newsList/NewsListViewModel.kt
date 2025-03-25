@@ -1,4 +1,4 @@
-package com.example.news.presentation.newsList
+package com.example.news.presentation.screens.newsList
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

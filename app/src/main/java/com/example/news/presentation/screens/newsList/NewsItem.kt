@@ -1,5 +1,7 @@
-package com.example.news.presentation.newsList
+package com.example.news.presentation.screens.newsList
 
+import android.net.Uri
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -14,12 +16,23 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.example.news.domain.model.Article
+import com.example.news.navigation.AppScreens
 
 @Composable
-fun NewsItem(article: Article) {
+fun NewsItem(
+    article: Article,
+    navController: NavController
+    ) {
     Card(
         modifier = Modifier
+            .clickable {
+                article.url.let { url ->
+                    val endCodeUrl = Uri.encode(url)
+                    navController.navigate(AppScreens.WebViewScreen.createRoute(endCodeUrl))
+                }
+            }
             .padding(8.dp)
             .fillMaxWidth(),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
