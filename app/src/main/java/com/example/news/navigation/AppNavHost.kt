@@ -8,14 +8,19 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import androidx.paging.compose.collectAsLazyPagingItems
+import com.example.news.presentation.screens.history.HistoryScreen
+import com.example.news.presentation.screens.history.HistoryViewModel
 import com.example.news.presentation.screens.newsList.NewsListScreen
 import com.example.news.presentation.screens.newsList.NewsListViewModel
 import com.example.news.presentation.screens.webView.WebViewScreen
+import com.example.news.presentation.theme.ThemeViewModel
 
 @Composable
 fun AppNavigation(
     viewModel:NewsListViewModel,
-    padding:PaddingValues
+    historyViewModel: HistoryViewModel,
+    padding:PaddingValues,
+    themeViewModel: ThemeViewModel
 ){
     val navController = rememberNavController()
     val news = viewModel.newsPagingData.collectAsLazyPagingItems()
@@ -25,7 +30,8 @@ fun AppNavigation(
                 navController = navController,
                 news = news,
                 padding = padding,
-                viewModel = viewModel
+                viewModel = viewModel,
+                themeViewModel = themeViewModel
             )
         }
         composable(
@@ -37,6 +43,10 @@ fun AppNavigation(
                 navController = navController,
                 url = url
                 )
+        }
+
+        composable(route = AppScreens.HistoryScreen.route) {
+            HistoryScreen(navController, historyViewModel)
         }
     }
 }

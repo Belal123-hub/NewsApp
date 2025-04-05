@@ -1,12 +1,11 @@
 package com.example.news.domain.model
 
-
-data class Article(
-    val id: String,
+data class HistoryArticles(
+    val url: String,
     val title: String,
     val description: String?,
-    val url: String,
-    val imageUrl: String?,
+    val urlToImage: String?,
     val publishedAt: String,
     val source: String,
+    val accessedAt: Long = System.currentTimeMillis()
 )

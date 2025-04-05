@@ -6,20 +6,23 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.map
 import com.example.news.data.local.NewsDatabase
-import com.example.news.data.model.ApiNewsResponse
+import com.example.news.data.mapper.toDomain
+import com.example.news.data.mapper.toEntity
 import com.example.news.data.remote.NewsApiService
 import com.example.news.data.remote.NewsRemoteMediator
+import com.example.news.data.util.ShareUtils
 import com.example.news.domain.model.Article
+import com.example.news.domain.model.HistoryArticles
 import com.example.news.domain.repository.NewsRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
- class NewsRepositoryImpl @Inject constructor(
+class NewsRepositoryImpl @Inject constructor(
     private val newsApiService: NewsApiService,
-    private val newsDatabase: NewsDatabase
+    private val newsDatabase: NewsDatabase,
+    private val shareUtils: ShareUtils
 ) : NewsRepository {
-
     @OptIn(ExperimentalPagingApi::class)
     override fun getTopHeadlines(country: String, query: String?): Flow<PagingData<Article>> {
         return if (query.isNullOrEmpty()) {
@@ -60,5 +63,22 @@ import javax.inject.Inject
                 }
             }
         }
+    }
+
+    override suspend fun saveToHistory(article: HistoryArticles) {
+        newsDatabase.historyDao().insert(article.toEntity())
+    }
+
+    override fun getHistory(): Flow<PagingData<HistoryArticles>> {
+        return Pager(
+            config = PagingConfig(pageSize = 20),
+            pagingSourceFactory = {newsDatabase.historyDao().getAllHistory()}
+        ).flow.map { pagingData ->
+            pagingData.map { it.toDomain() }
+        }
+    }
+
+    override suspend fun shareArticle(article: Article) {
+        shareUtils.shareNews(article)
     }
 }

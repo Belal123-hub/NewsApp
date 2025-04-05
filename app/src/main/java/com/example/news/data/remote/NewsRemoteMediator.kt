@@ -19,17 +19,15 @@ class NewsRemoteMediator(
 ) : RemoteMediator<Int, Article>() {
 
     private val articleDao = newsDatabase.articleDao()
-    private var currentPage = 1 // Track the current page number
+    private var currentPage = 1
 
     override suspend fun load(
         loadType: LoadType,
         state: PagingState<Int, Article>
     ): MediatorResult {
         return try {
-            // Log the load type
             Log.d("NewsRemoteMediator", "Load type: $loadType")
 
-            // Calculate the next page number
             val page = when (loadType) {
                 LoadType.REFRESH -> {
                     Log.d("NewsRemoteMediator", "Refreshing data...")
@@ -70,10 +68,7 @@ class NewsRemoteMediator(
                 Log.e("NewsRemoteMediator", "API error: ${response.status}")
                 return MediatorResult.Error(Exception("API error: ${response.status}"))
             }
-
-            // Handle nullable articles list
             val articles = response.articles?.mapNotNull { apiArticle ->
-                // Skip articles with missing required fields
                 if (apiArticle.url == null || apiArticle.title == null) {
                     Log.w("NewsRemoteMediator", "Skipping article with missing required fields: $apiArticle")
                     null
@@ -87,12 +82,9 @@ class NewsRemoteMediator(
                         source = apiArticle.source?.name ?: ""
                     )
                 }
-            } ?: emptyList() // Use an empty list if articles is null
+            } ?: emptyList()
 
-            // Log the number of articles fetched
             Log.d("NewsRemoteMediator", "Fetched ${articles.size} articles")
-
-            // Save the articles to the database
             newsDatabase.withTransaction {
                 if (loadType == LoadType.REFRESH) {
                     Log.d("NewsRemoteMediator", "Clearing database on refresh")
@@ -101,8 +93,6 @@ class NewsRemoteMediator(
                 Log.d("NewsRemoteMediator", "Inserting ${articles.size} articles into the database")
                 articleDao.insertAll(articles) // Insert new articles
             }
-
-            // Check if we've reached the end of pagination
             val endOfPaginationReached = articles.isEmpty()
             Log.d("NewsRemoteMediator", "End of pagination reached: $endOfPaginationReached")
 

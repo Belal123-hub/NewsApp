@@ -23,10 +23,10 @@ fun createKtorClient(): HttpClient {
         install(Logging) {
             logger = object : Logger {
                 override fun log(message: String) {
-                    Log.d("KtorLogger", message) // Logs requests and responses
+                    Log.d("KtorLogger", message)
                 }
             }
-            level = LogLevel.ALL // Log everything (Headers, Body, etc.)
+            level = LogLevel.ALL
         }
     }
 }
