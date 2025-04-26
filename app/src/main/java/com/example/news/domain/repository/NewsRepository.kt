@@ -4,7 +4,6 @@ import androidx.paging.PagingData
 import com.example.news.domain.model.Article
 import com.example.news.domain.model.HistoryArticles
 import kotlinx.coroutines.flow.Flow
-import java.util.Date
 
 interface NewsRepository {
     fun getTopHeadlines(

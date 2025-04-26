@@ -44,7 +44,6 @@ fun AppNavigation(
                 url = url
                 )
         }
-
         composable(route = AppScreens.HistoryScreen.route) {
             HistoryScreen(navController, historyViewModel)
         }

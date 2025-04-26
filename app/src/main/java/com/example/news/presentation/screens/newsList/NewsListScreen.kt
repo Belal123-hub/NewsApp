@@ -34,10 +34,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
+import com.example.news.R
 import com.example.news.domain.model.Article
 import com.example.news.navigation.AppScreens
 import com.example.news.presentation.theme.ThemeViewModel
@@ -75,15 +77,15 @@ fun NewsListScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("News") },
+                title = { Text(stringResource(R.string.news)) },
                 actions = {
                     IconButton(onClick = { navController.navigate(AppScreens.HistoryScreen.route) }) {
-                        Icon(Icons.Default.History, contentDescription = "History")
+                        Icon(Icons.Default.History, contentDescription = stringResource(R.string.history))
                     }
                     IconButton(onClick = { themeViewModel.toggleTheme() }) {
                         Icon(
                             imageVector = if (isDarkTheme) Icons.Default.LightMode else Icons.Default.DarkMode,
-                            contentDescription = "Toggle Theme"
+                            contentDescription = stringResource(R.string.toggle_theme)
                         )
                     }
                 }
@@ -110,7 +112,7 @@ fun NewsListScreen(
                 },
                 active = active,
                 onActiveChange = { active = it },
-                placeholder = { Text("Search news...") },
+                placeholder = { Text(stringResource(R.string.search_news)) },
                 leadingIcon = {
                     IconButton(onClick = {}) {
                         Icon(Icons.Filled.Search, contentDescription = null)
@@ -118,7 +120,9 @@ fun NewsListScreen(
                 }
             ) {}
 
-            Box(modifier = Modifier.fillMaxSize().padding(top = 8.dp)) {
+            Box(modifier = Modifier
+                .fillMaxSize()
+                .padding(top = 8.dp)) {
                 if (news.loadState.refresh is LoadState.Loading) {
                     CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
                 } else {

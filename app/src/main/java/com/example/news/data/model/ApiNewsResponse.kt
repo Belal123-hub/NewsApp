@@ -12,7 +12,7 @@ data class ApiNewsResponse(
     @SerialName("articles")
     val articles: List<ApiArticle>? = emptyList(),
     @SerialName("message")
-    val message: String? = null, // Add this to capture error messages
+    val message: String? = null,
     @SerialName("code")
-    val code: String? = null // Add this to capture error codes
+    val code: String? = null
 )

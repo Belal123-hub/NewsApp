@@ -6,8 +6,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.platform.LocalContext
-import com.example.news.domain.model.Article
+import androidx.compose.ui.res.stringResource
+import com.example.news.R
 import kotlinx.coroutines.launch
 
 
@@ -25,7 +25,7 @@ fun ShareButton(
     ) {
         Icon(
             imageVector = Icons.Default.Share,
-            contentDescription = "Share article"
+            contentDescription = stringResource(R.string.share_article)
         )
     }
 }

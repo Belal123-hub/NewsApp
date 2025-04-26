@@ -1,7 +1,5 @@
 package com.example.news.presentation.screens.newsList
 
-import android.content.Context
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn

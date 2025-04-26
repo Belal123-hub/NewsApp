@@ -7,9 +7,11 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
+import com.example.news.R
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -30,15 +32,17 @@ fun DateFilter(
             .fillMaxWidth()
             .padding(16.dp)
     ) {
-        Text(text = "Select Date to Filter News", fontWeight = FontWeight.Bold, fontSize = 18.sp)
+        Text(text = stringResource(R.string.select_date_to_filter_news), fontWeight = FontWeight.Bold, fontSize = 18.sp)
 
         // Display selected date in TextField
         TextField(
             value = selectedDate,
             onValueChange = {},
             readOnly = true,
-            label = { Text("Selected Date") },
-            modifier = Modifier.fillMaxWidth().padding(top = 8.dp)
+            label = { Text(stringResource(R.string.selected_date)) },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 8.dp)
         )
 
         // Button to trigger DatePicker
@@ -46,7 +50,7 @@ fun DateFilter(
             onClick = { showDatePickerDialog = true },
             modifier = Modifier.padding(top = 8.dp)
         ) {
-            Text("Pick a Date")
+            Text(stringResource(R.string.pick_a_date))
         }
 
         // Show DatePickerDialog when triggered
@@ -80,12 +84,12 @@ fun DatePickerModal(
                 onDateSelected(datePickerState.selectedDateMillis)
                 onDismiss()
             }) {
-                Text("OK")
+                Text(stringResource(R.string.ok))
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Cancel")
+                Text(stringResource(R.string.cancel))
             }
         }
     ) {

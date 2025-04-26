@@ -3,6 +3,7 @@ import android.widget.Toast
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.platform.LocalContext
+import com.example.news.R
 
 @Composable
 fun NetworkStatus(isOnline: Boolean) {
@@ -12,7 +13,7 @@ fun NetworkStatus(isOnline: Boolean) {
         if (!isOnline) {
             Toast.makeText(
                 context,
-                "Offline mode - showing cached data",
+                context.getString(R.string.offline_mode_showing_cached_data),
                 Toast.LENGTH_LONG
             ).show()
         }
