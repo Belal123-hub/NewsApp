@@ -53,13 +53,12 @@ import kotlinx.coroutines.flow.Flow
 @Composable
 fun NewsListScreen(
     navController: NavController,
-    newsFlow: Flow<PagingData<Article>>,   // changed here
+    newsFlow: Flow<PagingData<Article>>,
     padding: PaddingValues,
     viewModel: NewsListViewModel,
     themeViewModel: ThemeViewModel
 ) {
-    val news = newsFlow.collectAsLazyPagingItems()  // collect here now
-
+    val news = newsFlow.collectAsLazyPagingItems()
     val context = LocalContext.current
     var searchQuery by rememberSaveable { mutableStateOf("") }
     var active by rememberSaveable { mutableStateOf(false) }
@@ -87,19 +86,10 @@ fun NewsListScreen(
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text(stringResource(R.string.news)) },
-                actions = {
-                    IconButton(onClick = { navController.navigate(AppScreens.HistoryScreen.route) }) {
-                        Icon(Icons.Default.History, contentDescription = stringResource(R.string.history))
-                    }
-                    IconButton(onClick = { themeViewModel.toggleTheme() }) {
-                        Icon(
-                            imageVector = if (isDarkTheme) Icons.Default.LightMode else Icons.Default.DarkMode,
-                            contentDescription = stringResource(R.string.toggle_theme)
-                        )
-                    }
-                }
+            TopAppBarSection(
+                navController = navController,
+                isDarkTheme = isDarkTheme,
+                onToggleTheme = { themeViewModel.toggleTheme() }
             )
         }
     ) { innerPadding ->
@@ -110,9 +100,8 @@ fun NewsListScreen(
         ) {
             NetworkStatus(isOnline = isOnline)
 
-            SearchBar(
-                modifier = Modifier.fillMaxWidth(),
-                query = searchQuery,
+            SearchBarSection(
+                searchQuery = searchQuery,
                 onQueryChange = {
                     searchQuery = it
                     viewModel.searchNews(it)
@@ -122,54 +111,110 @@ fun NewsListScreen(
                     viewModel.searchNews(searchQuery)
                 },
                 active = active,
-                onActiveChange = { active = it },
-                placeholder = { Text(stringResource(R.string.search_news)) },
-                leadingIcon = {
-                    IconButton(onClick = {}) {
-                        Icon(Icons.Filled.Search, contentDescription = null)
+                onActiveChange = { active = it }
+            )
+
+            NewsListContent(
+                news = news,
+                listState = listState,
+                onArticleClick = { article ->
+                    viewModel.saveToHistory(article)
+                    val encodedUrl = Uri.encode(article.url)
+                    navController.navigate(AppScreens.WebViewScreen.createRoute(encodedUrl))
+                },
+                onShareClick = { article ->
+                    viewModel.shareArticle(article)
+                }
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun TopAppBarSection(
+    navController: NavController,
+    isDarkTheme: Boolean,
+    onToggleTheme: () -> Unit
+) {
+    TopAppBar(
+        title = { Text(stringResource(R.string.news)) },
+        actions = {
+            IconButton(onClick = { navController.navigate(AppScreens.HistoryScreen.route) }) {
+                Icon(Icons.Default.History, contentDescription = stringResource(R.string.history))
+            }
+            IconButton(onClick = onToggleTheme) {
+                Icon(
+                    imageVector = if (isDarkTheme) Icons.Default.LightMode else Icons.Default.DarkMode,
+                    contentDescription = stringResource(R.string.toggle_theme)
+                )
+            }
+        }
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun SearchBarSection(
+    searchQuery: String,
+    onQueryChange: (String) -> Unit,
+    onSearch: (String) -> Unit,
+    active: Boolean,
+    onActiveChange: (Boolean) -> Unit
+) {
+    SearchBar(
+        modifier = Modifier.fillMaxWidth(),
+        query = searchQuery,
+        onQueryChange = onQueryChange,
+        onSearch = onSearch,
+        active = active,
+        onActiveChange = onActiveChange,
+        placeholder = { Text(stringResource(R.string.search_news)) },
+        leadingIcon = {
+            IconButton(onClick = {}) {
+                Icon(Icons.Filled.Search, contentDescription = null)
+            }
+        }
+    ) {}
+}
+
+@Composable
+fun NewsListContent(
+    news: LazyPagingItems<Article>,
+    listState: androidx.compose.foundation.lazy.LazyListState,
+    onArticleClick: (Article) -> Unit,
+    onShareClick: (Article) -> Unit
+) {
+    Box(modifier = Modifier
+        .fillMaxSize()
+        .padding(top = 8.dp)) {
+        if (news.loadState.refresh is LoadState.Loading) {
+            CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+        } else {
+            LazyColumn(
+                state = listState,
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                items(news.itemCount) { index ->
+                    val article = news[index]
+                    if (article != null) {
+                        NewsItem(
+                            article = article,
+                            onClick = { onArticleClick(article) },
+                            onShare = { onShareClick(article) }
+                        )
                     }
                 }
-            ) {}
-
-            Box(modifier = Modifier
-                .fillMaxSize()
-                .padding(top = 8.dp)) {
-                if (news.loadState.refresh is LoadState.Loading) {
-                    CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
-                } else {
-                    LazyColumn(
-                        state = listState,
-                        modifier = Modifier.fillMaxSize(),
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        items(news.itemCount) { index ->
-                            val article = news[index]
-                            if (article != null) {
-                                NewsItem(
-                                    article = article,
-                                    onClick = {
-                                        viewModel.saveToHistory(article)
-                                        val encodedUrl = Uri.encode(article.url)
-                                        navController.navigate(AppScreens.WebViewScreen.createRoute(encodedUrl))
-                                    },
-                                    onShare = {
-                                        viewModel.shareArticle(article)
-                                    }
-                                )
-                            }
-                        }
-
-                        if (news.loadState.append is LoadState.Loading) {
-                            item {
-                                Box(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(16.dp),
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    CircularProgressIndicator()
-                                }
-                            }
+                if (news.loadState.append is LoadState.Loading) {
+                    item {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            CircularProgressIndicator()
                         }
                     }
                 }
@@ -177,5 +222,6 @@ fun NewsListScreen(
         }
     }
 }
+
 
 
