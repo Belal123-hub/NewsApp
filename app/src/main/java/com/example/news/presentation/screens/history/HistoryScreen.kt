@@ -28,7 +28,7 @@ fun HistoryScreen(
     viewModel: HistoryViewModel
 ) {
     val history = viewModel.historyPagingData.collectAsLazyPagingItems()
-    val isOnline by viewModel.isOnline.collectAsState()
+    val uiState by viewModel.uiState.collectAsState()
     val listState = rememberLazyListState()
 
     Scaffold(
@@ -51,7 +51,7 @@ fun HistoryScreen(
                 .padding(innerPadding)
                 .fillMaxSize()
         ) {
-            NetworkStatus(isOnline = isOnline)
+            NetworkStatus(isOnline = uiState.isOnline)
             LazyColumn(state = listState) {
                 items(history.itemCount) { index ->
                     val item = history[index]
@@ -63,3 +63,4 @@ fun HistoryScreen(
         }
     }
 }
+

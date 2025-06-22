@@ -9,7 +9,7 @@ import com.example.news.domain.model.HistoryArticles
 import com.example.news.domain.usecase.GetHistoryUseCase
 import com.example.news.util.NetworkStatusObserver
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 
 @HiltViewModel
@@ -17,8 +17,22 @@ class HistoryViewModel @Inject constructor(
     private val getHistoryUseCase: GetHistoryUseCase,
     networkMonitor: NetworkMonitor
 ) : ViewModel() {
+
     private val networkObserver = NetworkStatusObserver(networkMonitor, this)
-    val isOnline = networkObserver.isOnline
+
     val historyPagingData: Flow<PagingData<HistoryArticles>> =
         getHistoryUseCase().cachedIn(viewModelScope)
+
+    // ✅ Sealed UI state replaced by a stable data class
+    private val _uiState = MutableStateFlow(HistoryUiState())
+    val uiState: StateFlow<HistoryUiState> = _uiState.asStateFlow()
+
+    init {
+        // Collect isOnline changes and update state
+        networkObserver.isOnline
+            .onEach { isOnline ->
+                _uiState.update { it.copy(isOnline = isOnline) }
+            }
+            .launchIn(viewModelScope)
+    }
 }
