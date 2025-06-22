@@ -23,7 +23,6 @@ class HistoryViewModel @Inject constructor(
     val historyPagingData: Flow<PagingData<HistoryArticles>> =
         getHistoryUseCase().cachedIn(viewModelScope)
 
-    // ✅ Sealed UI state replaced by a stable data class
     private val _uiState = MutableStateFlow(HistoryUiState())
     val uiState: StateFlow<HistoryUiState> = _uiState.asStateFlow()
 
