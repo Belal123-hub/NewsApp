@@ -30,8 +30,7 @@ fun NewsItem(
             .fillMaxWidth()
             .clickable {
                 viewModel.saveToHistory(article)
-                val encodedUrl = Uri.encode(article.url)
-                navController.navigate(AppScreens.WebViewScreen.createRoute(encodedUrl))
+                navController.navigate(AppScreens.WebViewScreen.createRoute(article.url))
             }
             .padding(8.dp),
         elevation = CardDefaults.cardElevation(4.dp),
