@@ -1,6 +1,7 @@
 package com.example.news.presentation.screens.newsList
 
 import NetworkStatus
+import android.net.Uri
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -146,8 +147,14 @@ fun NewsListScreen(
                             if (article != null) {
                                 NewsItem(
                                     article = article,
-                                    navController = navController,
-                                    viewModel = viewModel
+                                    onClick = {
+                                        viewModel.saveToHistory(article)
+                                        val encodedUrl = Uri.encode(article.url)
+                                        navController.navigate(AppScreens.WebViewScreen.createRoute(encodedUrl))
+                                    },
+                                    onShare = {
+                                        viewModel.shareArticle(article)
+                                    }
                                 )
                             }
                         }

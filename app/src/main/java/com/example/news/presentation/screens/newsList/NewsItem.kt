@@ -22,16 +22,13 @@ import com.example.news.presentation.components.ShareButton
 @Composable
 fun NewsItem(
     article: Article,
-    navController: NavController,
-    viewModel: NewsListViewModel = hiltViewModel()
+    onClick: () -> Unit,
+    onShare: () -> Unit
 ) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable {
-                viewModel.saveToHistory(article)
-                navController.navigate(AppScreens.WebViewScreen.createRoute(article.url))
-            }
+            .clickable { onClick() }
             .padding(8.dp),
         elevation = CardDefaults.cardElevation(4.dp),
         shape = MaterialTheme.shapes.medium
@@ -73,11 +70,10 @@ fun NewsItem(
                         fontStyle = FontStyle.Italic,
                         fontSize = 12.sp
                     )
-                    ShareButton(
-                        onClick = { viewModel.shareArticle(article) }
-                    )
+                    ShareButton(onClick = onShare)
                 }
             }
         }
     }
 }
+
