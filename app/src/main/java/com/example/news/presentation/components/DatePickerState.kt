@@ -13,61 +13,71 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import com.example.news.R
+import com.example.news.util.DateFormatter
 import java.text.SimpleDateFormat
 import java.util.*
 
 @Composable
 fun DateFilter(
     selectedDate: String,
-    onDateChanged: (String) -> Unit
+    onPickDateClick: () -> Unit
 ) {
-    var showDatePickerDialog by remember { mutableStateOf(false) }
-    var selectedDateMillis by remember { mutableStateOf<Long?>(null) }
-
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp)
     ) {
-        // Hardcoded strings
-        Text(text = "Select Date to Filter News",
+        Text(
+            text = stringResource(R.string.select_date_label),
             fontWeight = FontWeight.Bold,
-            fontSize = 18.sp)
+            fontSize = 18.sp
+        )
 
         TextField(
             value = selectedDate,
             onValueChange = {},
             readOnly = true,
-            label = { Text("Selected Date") },
+            label = { Text(stringResource(R.string.selected_date)) },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 8.dp)
         )
 
         Button(
-            onClick = { showDatePickerDialog = true },
+            onClick = onPickDateClick,
             modifier = Modifier
                 .padding(top = 8.dp)
                 .testTag("pickDateButton")
         ) {
-            Text("Pick a Date")  // Hardcoded
-        }
-
-        if (showDatePickerDialog) {
-            DatePickerModal(
-                onDateSelected = { selectedMillis ->
-                    selectedMillis?.let {
-                        val formattedDate = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-                            .format(Date(it))
-                        onDateChanged(formattedDate)
-                    }
-                    showDatePickerDialog = false
-                },
-                onDismiss = { showDatePickerDialog = false }
-            )
+            Text(stringResource(R.string.pick_date))
         }
     }
 }
+
+@Composable
+fun DateFilterWrapper(onDateChanged: (String) -> Unit) {
+    var showDialog by remember { mutableStateOf(false) }
+    var selectedDateText by remember { mutableStateOf("") }
+
+    if (showDialog) {
+        DatePickerModal(
+            onDateSelected = { millis ->
+                millis?.let {
+                    selectedDateText = DateFormatter.formatToDisplay(it)
+                    onDateChanged(selectedDateText)
+                }
+                showDialog = false
+            },
+            onDismiss = { showDialog = false }
+        )
+    }
+
+    DateFilter(
+        selectedDate = selectedDateText,
+        onPickDateClick = { showDialog = true }
+    )
+}
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

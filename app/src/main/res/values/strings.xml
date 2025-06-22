@@ -9,11 +9,13 @@
     <string name="share_article">Share article</string>
     <string name="offline_mode_showing_cached_data">Offline mode - showing cached data</string>
     <string name="select_date_to_filter_news">Select Date to Filter News</string>
-    <string name="selected_date">Selected Date</string>
     <string name="pick_a_date">Pick a Date</string>
-    <string name="ok">OK</string>
-    <string name="cancel">Cancel</string>
     <string name="text_plain">text/plain</string>
     <string name="error_loading_page">Unable to load page. No URL provided.</string>
+    <string name="select_date_label">Select Date to Filter News</string>
+    <string name="selected_date">Selected Date</string>
+    <string name="pick_date">Pick a Date</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
 
 </resources>
