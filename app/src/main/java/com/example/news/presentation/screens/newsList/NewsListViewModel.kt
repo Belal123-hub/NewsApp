@@ -5,11 +5,9 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.example.news.data.network.NetworkMonitor
+import com.example.news.domain.NewsInteractor
 import com.example.news.domain.model.Article
-import com.example.news.domain.model.HistoryArticles
 import com.example.news.domain.usecase.GetTopHeadlinesUseCase
-import com.example.news.domain.usecase.SaveToHistoryUseCase
-import com.example.news.domain.usecase.ShareArticleUseCase
 import com.example.news.util.NetworkStatusObserver
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
@@ -21,9 +19,8 @@ import javax.inject.Inject
 @HiltViewModel
 class NewsListViewModel @Inject constructor(
     private val getTopHeadlinesUseCase: GetTopHeadlinesUseCase,
-    private val saveToHistoryUseCase: SaveToHistoryUseCase,
-    private val shareArticleUseCase: ShareArticleUseCase,
-    networkMonitor:NetworkMonitor
+    private val newsInteractor: NewsInteractor,
+    networkMonitor: NetworkMonitor
 ) : ViewModel() {
     private val networkObserver = NetworkStatusObserver(networkMonitor, this)
     val isOnline = networkObserver.isOnline
@@ -41,23 +38,13 @@ class NewsListViewModel @Inject constructor(
 
     fun saveToHistory(article: Article) {
         viewModelScope.launch {
-            saveToHistoryUseCase(
-                HistoryArticles(
-                    url = article.url,
-                    title = article.title,
-                    description = article.description,
-                    urlToImage = article.imageUrl,
-                    publishedAt = article.publishedAt,
-                    source = article.source,
-                    accessedAt = System.currentTimeMillis()
-                )
-            )
+            newsInteractor.saveToHistory(article)
         }
     }
 
     fun shareArticle(article: Article) {
         viewModelScope.launch {
-            shareArticleUseCase(article)
+            newsInteractor.shareArticle(article)
         }
     }
 }
