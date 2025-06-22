@@ -2,13 +2,15 @@ package com.example.news.data.preferences
 
 import android.content.Context
 import android.content.SharedPreferences
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
+import javax.inject.Inject
 
-class AppPreferences(context: Context) {
+class AppPreferences @Inject constructor(@ApplicationContext context: Context) {
 
     private val prefs: SharedPreferences = context.getSharedPreferences("settings", Context.MODE_PRIVATE)
     private val DARK_THEME_KEY = "dark_theme_enabled"

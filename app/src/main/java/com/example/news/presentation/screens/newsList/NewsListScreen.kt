@@ -42,6 +42,7 @@ import androidx.paging.compose.LazyPagingItems
 import com.example.news.R
 import com.example.news.domain.model.Article
 import com.example.news.navigation.AppScreens
+import com.example.news.presentation.theme.ThemeUiState
 import com.example.news.presentation.theme.ThemeViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -58,7 +59,11 @@ fun NewsListScreen(
     var active by rememberSaveable { mutableStateOf(false) }
     val isOnline by viewModel.isOnline.collectAsState()
     val listState = rememberLazyListState()
-    val isDarkTheme by themeViewModel.isDarkTheme.collectAsState()
+    val themeUiState by themeViewModel.uiState.collectAsState()
+    val isDarkTheme = when (themeUiState) {
+        is ThemeUiState.Dark -> true
+        is ThemeUiState.Light -> false
+    }
 
     LaunchedEffect(searchQuery) {
         viewModel.searchNews(searchQuery)

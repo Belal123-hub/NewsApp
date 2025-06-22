@@ -17,6 +17,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.navigation.NavController
 import com.example.news.R
@@ -41,17 +42,29 @@ fun WebViewScreen(navController: NavController, url: String?) {
             )
         }
     ) { paddingValues ->
-        Box(modifier = Modifier.padding(paddingValues)) {
-            url?.let {
+        Box(modifier = Modifier
+            .padding(paddingValues)
+            .fillMaxSize()) {
+
+            if (url != null) {
                 AndroidView(
                     factory = { context ->
                         WebView(context).apply {
                             settings.javaScriptEnabled = true
-                            loadUrl(it)
+                            loadUrl(url)
                         }
                     },
-                    modifier = Modifier.fillMaxSize()
+                    modifier = Modifier
+                        .fillMaxSize()
                         .testTag("WebView")
+                )
+            } else {
+                // Defensive fallback UI
+                Text(
+                    text = stringResource(R.string.error_loading_page),
+                    modifier = Modifier
+                        .padding(16.dp)
+                        .testTag("WebViewError")
                 )
             }
         }
