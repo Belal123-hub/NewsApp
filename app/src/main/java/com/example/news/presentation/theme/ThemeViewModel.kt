@@ -1,10 +1,13 @@
 package com.example.news.presentation.theme
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.news.data.preferences.AppPreferences
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -12,12 +15,16 @@ class ThemeViewModel @Inject constructor(
     private val preferences: AppPreferences
 ) : ViewModel() {
 
-    private val _isDarkTheme = MutableStateFlow(preferences.loadTheme())
-    val isDarkTheme: StateFlow<Boolean> = _isDarkTheme
+    val isDarkTheme: StateFlow<Boolean> = preferences.isDarkTheme
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = preferences.loadTheme()
+        )
 
     fun toggleTheme() {
-        val newTheme = !_isDarkTheme.value
-        _isDarkTheme.value = newTheme
-        preferences.saveTheme(newTheme)
+        viewModelScope.launch {
+            preferences.saveTheme(!isDarkTheme.value)
+        }
     }
 }
