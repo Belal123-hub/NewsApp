@@ -38,22 +38,27 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.paging.LoadState
+import androidx.paging.PagingData
 import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
 import com.example.news.R
 import com.example.news.domain.model.Article
 import com.example.news.navigation.AppScreens
 import com.example.news.presentation.theme.ThemeUiState
 import com.example.news.presentation.theme.ThemeViewModel
+import kotlinx.coroutines.flow.Flow
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NewsListScreen(
     navController: NavController,
-    news: LazyPagingItems<Article>,
+    newsFlow: Flow<PagingData<Article>>,   // changed here
     padding: PaddingValues,
     viewModel: NewsListViewModel,
     themeViewModel: ThemeViewModel
 ) {
+    val news = newsFlow.collectAsLazyPagingItems()  // collect here now
+
     val context = LocalContext.current
     var searchQuery by rememberSaveable { mutableStateOf("") }
     var active by rememberSaveable { mutableStateOf(false) }
@@ -165,4 +170,5 @@ fun NewsListScreen(
         }
     }
 }
+
 

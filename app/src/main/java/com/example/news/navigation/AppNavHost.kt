@@ -17,18 +17,18 @@ import com.example.news.presentation.theme.ThemeViewModel
 
 @Composable
 fun AppNavigation(
-    viewModel:NewsListViewModel,
+    viewModel: NewsListViewModel,
     historyViewModel: HistoryViewModel,
-    padding:PaddingValues,
+    padding: PaddingValues,
     themeViewModel: ThemeViewModel
-){
+) {
     val navController = rememberNavController()
-    val news = viewModel.newsPagingData.collectAsLazyPagingItems()
-    NavHost(navController = navController, startDestination = AppScreens.NewsScreen.route){
-        composable(route = AppScreens.NewsScreen.route){
+
+    NavHost(navController = navController, startDestination = AppScreens.NewsScreen.route) {
+        composable(route = AppScreens.NewsScreen.route) {
             NewsListScreen(
                 navController = navController,
-                news = news,
+                newsFlow = viewModel.newsPagingData,  // pass Flow here
                 padding = padding,
                 viewModel = viewModel,
                 themeViewModel = themeViewModel
@@ -37,12 +37,12 @@ fun AppNavigation(
         composable(
             route = AppScreens.WebViewScreen.route,
             arguments = listOf(navArgument("url") { type = NavType.StringType })
-        ){ backStackEntery ->
-            val url = backStackEntery.arguments?.getString("url")
+        ) { backStackEntry ->
+            val url = backStackEntry.arguments?.getString("url")
             WebViewScreen(
                 navController = navController,
                 url = url
-                )
+            )
         }
         composable(route = AppScreens.HistoryScreen.route) {
             HistoryScreen(navController, historyViewModel)
