@@ -32,6 +32,10 @@ class MainActivity : ComponentActivity() {
     private val newsViewModel: NewsListViewModel by viewModels()
     private val historyViewModel: HistoryViewModel by viewModels()
     private val themeViewModel: ThemeViewModel by viewModels()
+    companion object {
+        private const val SPLASH_SCREEN_DELAY_MS = 5000L
+    }
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -40,7 +44,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         splashScreen.setKeepOnScreenCondition {keepSplashScreen}
         lifecycleScope.launch {
-            delay(5000)
+            delay(SPLASH_SCREEN_DELAY_MS)
             keepSplashScreen=false
         }
         enableEdgeToEdge()
