@@ -1,4 +1,6 @@
+// data/util/ShareUtils.kt
 package com.example.news.data.util
+
 import android.content.Context
 import android.content.Intent
 import android.util.Log
@@ -14,7 +16,7 @@ class ShareUtils @Inject constructor(
             val shareIntent = Intent(Intent.ACTION_SEND).apply {
                 type = context.getString(R.string.text_plain)
                 putExtra(Intent.EXTRA_SUBJECT, article.title)
-                putExtra(Intent.EXTRA_TEXT, "${article.title}\n\n${article.url}")
+                putExtra(Intent.EXTRA_TEXT, article.getShareText())
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             }
 

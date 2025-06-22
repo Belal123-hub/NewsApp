@@ -9,4 +9,8 @@ data class Article(
     val imageUrl: String?,
     val publishedAt: String,
     val source: String,
-)
+){
+    fun getShareText(): String {
+        return "$title\n\n$url"
+    }
+}
