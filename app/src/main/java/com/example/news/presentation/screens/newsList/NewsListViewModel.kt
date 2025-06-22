@@ -1,5 +1,6 @@
 package com.example.news.presentation.screens.newsList
 
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
@@ -9,7 +10,7 @@ import com.example.news.domain.model.HistoryArticles
 import com.example.news.domain.usecase.GetTopHeadlinesUseCase
 import com.example.news.domain.usecase.SaveToHistoryUseCase
 import com.example.news.domain.usecase.ShareArticleUseCase
-import com.example.news.presentation.screens.BaseViewModel
+import com.example.news.util.NetworkStatusObserver
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -23,7 +24,9 @@ class NewsListViewModel @Inject constructor(
     private val saveToHistoryUseCase: SaveToHistoryUseCase,
     private val shareArticleUseCase: ShareArticleUseCase,
     networkMonitor:NetworkMonitor
-) : BaseViewModel(networkMonitor) {
+) : ViewModel() {
+    private val networkObserver = NetworkStatusObserver(networkMonitor, this)
+    val isOnline = networkObserver.isOnline
     private var currentQuery = MutableStateFlow<String?>(null)
 
     val newsPagingData: Flow<PagingData<Article>> = currentQuery

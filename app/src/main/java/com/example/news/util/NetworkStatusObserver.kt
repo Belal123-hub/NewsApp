@@ -1,17 +1,19 @@
-package com.example.news.presentation.screens
+package com.example.news.util
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.news.data.network.NetworkMonitor
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
 
-abstract class BaseViewModel(
-    private val networkMonitor: NetworkMonitor
-): ViewModel(){
-    val isOnline = networkMonitor.isOnline
+class NetworkStatusObserver(
+    networkMonitor: NetworkMonitor,
+    viewModel: ViewModel
+) {
+    val isOnline: StateFlow<Boolean> = networkMonitor.isOnline
         .stateIn(
-            scope = viewModelScope,
+            scope = viewModel.viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),
             initialValue = true
         )
