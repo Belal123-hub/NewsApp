@@ -39,35 +39,32 @@ class NewsRemoteMediator(
                     return MediatorResult.Success(endOfPaginationReached = true) // No prepend needed
                 }
                 LoadType.APPEND -> {
-                    // Get the last item in the current list
                     val lastItem = state.lastItemOrNull()
-
-                    // Log the last item
                     Log.d("NewsRemoteMediator", "Last item: ${lastItem?.title}")
 
-                    // If the last item is null, we've reached the end of pagination
                     if (lastItem == null) {
                         Log.d("NewsRemoteMediator", "Last item is null, end of pagination reached")
                         return MediatorResult.Success(endOfPaginationReached = true)
                     }
-                    // Increment the current page number
                     currentPage += 1
                     currentPage
                 }
             }
 
-            // Log the page number
             Log.d("NewsRemoteMediator", "Loading page: $page")
 
-            // Fetch the next page of articles from the API
-            val response = newsApiService.getTopHeadlines(country = country, page = page, pageSize = state.config.pageSize)
+            val response = newsApiService.getTopHeadlines(
+                country = country,
+                page = page,
+                pageSize = state.config.pageSize
+            )
             Log.d("NewsRemoteMediator", "API response: $response")
 
-            // Check if the API returned an error
             if (response.status != "ok") {
                 Log.e("NewsRemoteMediator", "API error: ${response.status}")
                 return MediatorResult.Error(Exception("API error: ${response.status}"))
             }
+
             val articles = response.articles?.mapNotNull { apiArticle ->
                 if (apiArticle.url == null || apiArticle.title == null) {
                     Log.w("NewsRemoteMediator", "Skipping article with missing required fields: $apiArticle")
@@ -88,15 +85,15 @@ class NewsRemoteMediator(
             newsDatabase.withTransaction {
                 if (loadType == LoadType.REFRESH) {
                     Log.d("NewsRemoteMediator", "Clearing database on refresh")
-                    articleDao.clearAll() // Clear the database on refresh
+                    articleDao.clearAll()
                 }
                 Log.d("NewsRemoteMediator", "Inserting ${articles.size} articles into the database")
-                articleDao.insertAll(articles) // Insert new articles
+                articleDao.insertAll(articles)
             }
+
             val endOfPaginationReached = articles.isEmpty()
             Log.d("NewsRemoteMediator", "End of pagination reached: $endOfPaginationReached")
 
-            // Return the result with the next page key
             MediatorResult.Success(endOfPaginationReached = endOfPaginationReached)
         } catch (e: IOException) {
             Log.e("NewsRemoteMediator", "IOException: ${e.message}", e)
@@ -106,7 +103,7 @@ class NewsRemoteMediator(
             MediatorResult.Error(e)
         } catch (e: Exception) {
             Log.e("NewsRemoteMediator", "Unexpected error: ${e.message}", e)
-            MediatorResult.Error(e)
+            throw e // rethrow unexpected exceptions to fail loudly
         }
     }
 }
