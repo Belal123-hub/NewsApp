@@ -20,6 +20,7 @@ import com.example.news.navigation.AppNavigation
 import com.example.news.presentation.screens.history.HistoryViewModel
 import com.example.news.presentation.screens.newsList.NewsListScreen
 import com.example.news.presentation.screens.newsList.NewsListViewModel
+import com.example.news.presentation.theme.ThemeUiState
 import com.example.news.presentation.theme.ThemeViewModel
 import com.example.news.ui.theme.NewsTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -44,7 +45,12 @@ class MainActivity : ComponentActivity() {
         }
         enableEdgeToEdge()
         setContent {
-            val isDarkTheme by themeViewModel.isDarkTheme.collectAsState()
+            val themeUiState by themeViewModel.uiState.collectAsState()
+
+            val isDarkTheme = when (themeUiState) {
+                is ThemeUiState.Dark -> true
+                is ThemeUiState.Light -> false
+            }
 
             NewsTheme(darkTheme = isDarkTheme) {
                 Scaffold(modifier = Modifier.fillMaxSize()) { padding ->
@@ -57,6 +63,7 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+
 
     }
 }

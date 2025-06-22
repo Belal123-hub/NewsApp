@@ -5,8 +5,9 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
-import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 
@@ -14,28 +15,43 @@ import org.junit.Test
 class ThemeViewModelTest {
 
     private lateinit var appPreferences: AppPreferences
-    private lateinit var viewModel: ThemeViewModel
 
     @Before
     fun setUp() {
         appPreferences = mockk(relaxed = true)
-        every { appPreferences.loadTheme() } returns false
-        viewModel = ThemeViewModel(appPreferences)
     }
-// Tests that toggling theme changes the value to dark and saves preference
+
+    // Tests that toggling theme from Light -> Dark
     @Test
-    fun toggleTheme_shouldUpdateStateAndSavePreference() = runTest {
+    fun toggleTheme_shouldUpdateStateToDark_andSavePreference() = runTest {
+        // Given current theme is Light
+        every { appPreferences.loadTheme() } returns false
+        every { appPreferences.isDarkTheme } returns flowOf(false)
+
+        val viewModel = ThemeViewModel(appPreferences)
+
+        // When
         viewModel.toggleTheme()
-        assertEquals(true, viewModel.isDarkTheme.value)
+
+        // Then
+        assertTrue(viewModel.uiState.value is ThemeUiState.Dark)
         verify { appPreferences.saveTheme(true) }
     }
-// Tests toggling theme from dark to light and verifies preference saved as false
+
+    // Tests that toggling theme from Dark -> Light
     @Test
-    fun toggleTheme_shouldFlipBooleanBackAndForth() = runTest {
+    fun toggleTheme_shouldUpdateStateToLight_andSavePreference() = runTest {
+        // Given current theme is Dark
         every { appPreferences.loadTheme() } returns true
+        every { appPreferences.isDarkTheme } returns flowOf(true)
+
         val viewModel = ThemeViewModel(appPreferences)
+
+        // When
         viewModel.toggleTheme()
-        assertEquals(false, viewModel.isDarkTheme.value)
+
+        // Then
+        assertTrue(viewModel.uiState.value is ThemeUiState.Light)
         verify { appPreferences.saveTheme(false) }
     }
 }

@@ -4,9 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.news.data.preferences.AppPreferences
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -15,16 +13,26 @@ class ThemeViewModel @Inject constructor(
     private val preferences: AppPreferences
 ) : ViewModel() {
 
-    val isDarkTheme: StateFlow<Boolean> = preferences.isDarkTheme
+    private val themeFlow = preferences.isDarkTheme
+
+    val uiState: StateFlow<ThemeUiState> = themeFlow
+        .map { isDark ->
+            if (isDark) ThemeUiState.Dark else ThemeUiState.Light
+        }
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),
-            initialValue = preferences.loadTheme()
+            initialValue = if (preferences.loadTheme()) ThemeUiState.Dark else ThemeUiState.Light
         )
 
     fun toggleTheme() {
         viewModelScope.launch {
-            preferences.saveTheme(!isDarkTheme.value)
+            preferences.saveTheme(
+                when (uiState.value) {
+                    is ThemeUiState.Dark -> false
+                    is ThemeUiState.Light -> true
+                }
+            )
         }
     }
 }
