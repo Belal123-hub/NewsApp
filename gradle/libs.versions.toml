@@ -26,6 +26,8 @@ firebaseCrashlyticsBuildtools = "3.0.3"
 materialIconsExtended = "1.7.8"
 androidxCore = "1.15.0"
 coil = "2.6.0"
+junitKtx = "1.2.1"
+runtime = "1.0.0-alpha04"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -66,6 +68,8 @@ material3 = { module = "androidx.compose.material3:material3", version.ref = "ma
 androidx-core = { group = "androidx.core", name = "core-ktx", version.ref = "androidxCore" }
 coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coil" }
 coil-base = { module = "io.coil-kt:coil", version.ref = "coil" }
+androidx-junit-ktx = { group = "androidx.test.ext", name = "junit-ktx", version.ref = "junitKtx" }
+androidx-runtime = { group = "androidx.xr.runtime", name = "runtime", version.ref = "runtime" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

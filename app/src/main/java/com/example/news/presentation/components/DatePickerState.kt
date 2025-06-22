@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.text.font.FontWeight
@@ -15,16 +16,12 @@ import com.example.news.R
 import java.text.SimpleDateFormat
 import java.util.*
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun DateFilter(
     selectedDate: String,
     onDateChanged: (String) -> Unit
 ) {
-    // State to show DatePicker dialog
     var showDatePickerDialog by remember { mutableStateOf(false) }
-
-    // Track selected date as Long (milliseconds)
     var selectedDateMillis by remember { mutableStateOf<Long?>(null) }
 
     Column(
@@ -32,35 +29,38 @@ fun DateFilter(
             .fillMaxWidth()
             .padding(16.dp)
     ) {
-        Text(text = stringResource(R.string.select_date_to_filter_news), fontWeight = FontWeight.Bold, fontSize = 18.sp)
+        // Hardcoded strings
+        Text(text = "Select Date to Filter News",
+            fontWeight = FontWeight.Bold,
+            fontSize = 18.sp)
 
-        // Display selected date in TextField
         TextField(
             value = selectedDate,
             onValueChange = {},
             readOnly = true,
-            label = { Text(stringResource(R.string.selected_date)) },
+            label = { Text("Selected Date") },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 8.dp)
         )
 
-        // Button to trigger DatePicker
         Button(
             onClick = { showDatePickerDialog = true },
-            modifier = Modifier.padding(top = 8.dp)
+            modifier = Modifier
+                .padding(top = 8.dp)
+                .testTag("pickDateButton")
         ) {
-            Text(stringResource(R.string.pick_a_date))
+            Text("Pick a Date")  // Hardcoded
         }
 
-        // Show DatePickerDialog when triggered
         if (showDatePickerDialog) {
             DatePickerModal(
                 onDateSelected = { selectedMillis ->
-                    selectedDateMillis = selectedMillis
-                    val formattedDate = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-                        .format(Date(selectedMillis!!))
-                    onDateChanged(formattedDate) // Update selected date
+                    selectedMillis?.let {
+                        val formattedDate = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+                            .format(Date(it))
+                        onDateChanged(formattedDate)
+                    }
                     showDatePickerDialog = false
                 },
                 onDismiss = { showDatePickerDialog = false }
