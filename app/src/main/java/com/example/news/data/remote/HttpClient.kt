@@ -7,22 +7,26 @@ import io.ktor.serialization.kotlinx.json.*
 import kotlinx.serialization.json.Json
 import io.ktor.client.plugins.logging.*
 import android.util.Log
+import kotlinx.serialization.ExperimentalSerializationApi
 
+@OptIn(ExperimentalSerializationApi::class)
 fun createKtorClient(): HttpClient {
     return HttpClient(Android) {
         install(ContentNegotiation) {
             json(Json {
-                ignoreUnknownKeys = true
                 prettyPrint = true
+                isLenient = true
+                ignoreUnknownKeys = true
+                explicitNulls = false
             })
         }
         install(Logging) {
             logger = object : Logger {
                 override fun log(message: String) {
-                    Log.d("KtorLogger", message) // Logs requests and responses
+                    Log.d("KtorLogger", message)
                 }
             }
-            level = LogLevel.ALL // Log everything (Headers, Body, etc.)
+            level = LogLevel.ALL
         }
     }
 }
