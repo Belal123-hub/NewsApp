@@ -38,11 +38,22 @@ NewsWave is a modern news aggregator that delivers the latest headlines with off
 
 ---
 
-## 📸 Screenshots  
-| **News Feed** | **WebView**
-|--------------|-------------|
-| ![News](https://github.com/user-attachments/assets/b3cd33f0-7779-4992-b0b4-8c66291cc909) | ![WebView](https://github.com/user-attachments/assets/5ef338ca-903d-49a6-a774-0a6441dbddac)
+## 📸 Screenshots
 
+<p align="center">
+  <table>
+    <tr>
+      <td align="center"><b>News Feed (API Integration)</b></td>
+      <td align="center"><b>In-App WebView</b></td>
+    </tr>
+    <tr>
+      <td><img src="https://github.com/user-attachments/assets/b3cd33f0-7779-4992-b0b4-8c66291cc909" width="280" /></td>
+      <td><img src="https://github.com/user-attachments/assets/5ef338ca-903d-49a6-a774-0a6441dbddac" width="280" /></td>
+    </tr>
+  </table>
+</p>
+
+---
 ---
 
 ## 🧩 App Structure  
